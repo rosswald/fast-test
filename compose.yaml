@@ -1,0 +1,28 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: fast-test-php
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - fast-test
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: fast-test-nginx
+    depends_on:
+      - php
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www/html:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - fast-test
+
+networks:
+  fast-test:
+    driver: bridge
